@@ -1,0 +1,2 @@
+shader vertex = ./assets/standard.vs
+shader fragment = ./assets/standard.fs

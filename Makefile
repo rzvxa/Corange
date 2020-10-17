@@ -5,7 +5,7 @@ SRC = $(wildcard src/*.c) $(wildcard src/*/*.c)
 OBJ = $(addprefix obj/,$(notdir $(SRC:.c=.o)))
 
 CFLAGS = -I ./include -std=gnu99 -Wall -Werror -Wno-unused -O3 -g
-LFLAGS = -lSDL2 -lSDL2_mixer -lSDL2_net -shared -g
+LFLAGS = -lSDL2 -lSDL2_mixer -lSDL2_net -llua -shared -g
 
 PLATFORM = $(shell uname)
 
@@ -35,31 +35,31 @@ all: $(DYNAMIC) $(STATIC)
 
 $(DYNAMIC): $(OBJ)
 	$(CC) $(OBJ) $(LFLAGS) -o $@
-	
+
 $(STATIC): $(OBJ)
 	$(AR) rcs $@ $(OBJ)
-	
+
 obj/%.o: src/%.c | obj
 	$(CC) $< -c $(CFLAGS) -o $@
 
 obj/%.o: src/*/%.c | obj
 	$(CC) $< -c $(CFLAGS) -o $@
-	
+
 obj:
 	mkdir obj
-	
+
 corange.res: corange.rc
 	windres $< -O coff -o $@
-	
+
 clean:
 	rm $(OBJ) $(STATIC) $(DYNAMIC)
-  
+
 install_unix: $(STATIC)
 	cp $(STATIC) /usr/local/lib/$(STATIC)
-  
+
 install_win32: $(STATIC)
 	cp $(STATIC) C:/MinGW/lib/$(STATIC)
-  
+
 install_win64: $(STATIC) $(DYNAMIC)
 	cp $(STATIC) C:/MinGW64/x86_64-w64-mingw32/lib/$(STATIC)
 	cp $(DYNAMIC) C:/MinGW64/x86_64-w64-mingw32/bin/$(DYNAMIC)
